@@ -6,7 +6,7 @@
 export interface Field {
   key: string
   label: string
-  type?: 'text' | 'textarea' | 'select' | 'toggle' | 'tags' | 'gradient' | 'url' | 'date'
+  type?: 'text' | 'textarea' | 'select' | 'toggle' | 'tags' | 'gradient' | 'url' | 'date' | 'datetime'
   options?: string[]
   placeholder?: string
   required?: boolean
@@ -30,6 +30,23 @@ const saving = ref(false)
 const error = ref('')
 const toast = ref('')
 
+// ISO <-> <input type="datetime-local"> (browser's local time)
+const toLocalInput = (iso?: string) => {
+  if (!iso) return ''
+  const d = new Date(iso)
+  return Number.isNaN(d.getTime()) ? '' : new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16)
+}
+const dtKeys = computed(() => props.fields.filter(f => f.type === 'datetime').map(f => f.key))
+const isScheduled = (item: any) => !!item.publishAt && new Date(item.publishAt).getTime() > Date.now()
+const fmtWhen = (iso: string) => new Date(iso).toLocaleString(undefined, { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })
+
+// newest / latest-scheduled first when items have dates
+const sorted = computed(() => {
+  const list = items.value || []
+  if (!list.some(i => i.publishAt || i.date)) return list
+  return [...list].sort((a, b) => String(b.publishAt || b.date || '').localeCompare(String(a.publishAt || a.date || '')))
+})
+
 function openNew() {
   editing.value = structuredClone({ ...props.defaults })
   error.value = ''
@@ -37,6 +54,7 @@ function openNew() {
 function openEdit(item: any) {
   editing.value = structuredClone(toRaw(item))
   if (Array.isArray(editing.value!.tags)) editing.value!.tagsText = editing.value!.tags.join(', ')
+  for (const k of dtKeys.value) editing.value![k] = toLocalInput(editing.value![k])
   error.value = ''
 }
 function notify(msg: string) {
@@ -53,6 +71,7 @@ async function save() {
     body.tags = String(body.tagsText).split(',').map(t => t.trim()).filter(Boolean)
     delete body.tagsText
   }
+  for (const k of dtKeys.value) body[k] = body[k] ? new Date(body[k]).toISOString() : ''
   try {
     if (body.id) await $fetch(`/api/admin/collection/${props.collection}/${body.id}`, { method: 'PUT', body })
     else await $fetch(`/api/admin/collection/${props.collection}`, { method: 'POST', body })
@@ -103,18 +122,18 @@ const hasPublished = computed(() => props.fields.some(f => f.key === 'published'
     </div>
 
     <div class="list">
-      <div v-for="item in items" :key="item.id" class="row card">
-        <span v-if="item.gradient" class="sw" :style="{ background: item.gradient }" />
+      <div v-for="item in sorted" :key="item.id" class="row card">
+        <span v-if="item.gradient || item.cover" class="sw" :style="{ background: item.gradient || item.cover }" />
         <span v-else-if="item.icon" class="sw icon"><Icon :name="item.icon" :size="18" /></span>
         <div class="txt">
           <b>{{ item[titleKey] }}</b>
           <span v-if="subtitleKey">{{ item[subtitleKey] }}</span>
         </div>
-        <button v-if="hasPublished" class="pill" :class="{ on: item.published }" @click="togglePublished(item)">
-          {{ item.published ? 'Published' : 'Draft' }}
+        <button v-if="hasPublished" class="pill" :class="{ on: item.published && !isScheduled(item), sched: item.published && isScheduled(item) }" :title="item.published ? 'Click to unpublish' : 'Click to publish'" @click="togglePublished(item)">
+          {{ !item.published ? 'Draft' : isScheduled(item) ? `Scheduled · ${fmtWhen(item.publishAt)}` : 'Published' }}
         </button>
         <div class="actions">
-          <NuxtLink v-if="item.slug && item.published" :to="`${viewBase || '/projects'}/${item.slug}`" target="_blank" class="btn btn-sm" title="View"><Icon name="eye" :size="16" /></NuxtLink>
+          <NuxtLink v-if="item.slug && item.published && !isScheduled(item)" :to="`${viewBase || '/projects'}/${item.slug}`" target="_blank" class="btn btn-sm" title="View"><Icon name="eye" :size="16" /></NuxtLink>
           <button class="btn btn-sm" title="Edit" @click="openEdit(item)"><Icon name="edit" :size="16" /></button>
           <button class="btn btn-sm btn-danger" title="Delete" @click="remove(item)"><Icon name="trash" :size="16" /></button>
         </div>
@@ -145,7 +164,7 @@ const hasPublished = computed(() => props.fields.some(f => f.key === 'published'
               <div v-else-if="f.type === 'gradient'" class="grads">
                 <button v-for="g in gradients" :key="g" type="button" class="g" :class="{ on: editing[f.key] === g }" :style="{ background: g }" :aria-label="g" @click="editing[f.key] = g" />
               </div>
-              <input v-else :id="`f-${f.key}`" v-model="editing[f.key]" class="input" :type="f.type === 'url' ? 'url' : f.type === 'date' ? 'date' : 'text'" :placeholder="f.placeholder" :required="f.required">
+              <input v-else :id="`f-${f.key}`" v-model="editing[f.key]" class="input" :type="f.type === 'url' ? 'url' : f.type === 'date' ? 'date' : f.type === 'datetime' ? 'datetime-local' : 'text'" :placeholder="f.placeholder" :required="f.required">
             </div>
           </div>
           <p v-if="error" class="err">{{ error }}</p>
@@ -172,6 +191,7 @@ h1 { font-size: 1.8rem; }
 .txt { flex: 1; min-width: 0; display: grid; }
 .txt span { color: var(--muted); font-size: .88rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pill { padding: 5px 12px; border-radius: 99px; font-size: .78rem; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--muted); }
+.pill.sched { color: #fbbf24; border-color: rgba(251,191,36,.4); background: rgba(251,191,36,.08); }
 .pill.on { color: var(--success); border-color: color-mix(in srgb, var(--success) 40%, transparent); background: color-mix(in srgb, var(--success) 10%, transparent); }
 .actions { display: flex; gap: 6px; }
 .actions .btn { padding: 8px 10px; }

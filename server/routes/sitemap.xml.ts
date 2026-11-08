@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
   const urls = [
     '/', '/projects', '/blog',
     ...projects.filter(p => p.published).map(p => `/projects/${p.slug}`),
-    ...posts.filter(p => p.published).map(p => `/blog/${p.slug}`),
+    ...livePosts(posts).map(p => `/blog/${p.slug}`),
   ]
   setHeader(event, 'content-type', 'application/xml; charset=utf-8')
   return `<?xml version="1.0" encoding="UTF-8"?>

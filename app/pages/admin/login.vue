@@ -35,7 +35,10 @@ async function login() {
       </div>
       <p v-if="error" class="err">{{ error }}</p>
       <button class="btn btn-primary" :disabled="loading">{{ loading ? 'Signing in…' : 'Sign in' }}</button>
-      <NuxtLink to="/" class="back">← Back to website</NuxtLink>
+      <div class="links">
+        <NuxtLink to="/admin/forgot">Forgot password?</NuxtLink>
+        <NuxtLink to="/">← Back to website</NuxtLink>
+      </div>
     </form>
   </div>
 </template>
@@ -47,5 +50,7 @@ async function login() {
 h1 { font-size: 1.7rem; }
 p { color: var(--muted); }
 .err { color: var(--danger); font-size: .9rem; }
-.back { color: var(--muted); font-size: .88rem; text-align: center; }
+.links { display: flex; justify-content: space-between; gap: 10px; font-size: .88rem; }
+.links a { color: var(--muted); }
+.links a:hover { color: var(--text); }
 </style>

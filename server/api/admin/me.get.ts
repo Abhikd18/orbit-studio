@@ -1,4 +1,3 @@
 export default defineEventHandler(async (event) => {
-  const session = await adminSession(event)
-  return { admin: !!session.data.admin }
+  return { admin: await isAdmin(event), emailReset: emailConfigured() }
 })

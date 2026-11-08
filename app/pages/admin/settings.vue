@@ -54,6 +54,7 @@ async function save() {
 </script>
 
 <template>
+  <div class="page">
   <form class="settings" @submit.prevent="save">
     <div class="head">
       <div>
@@ -88,10 +89,12 @@ async function save() {
       <div class="preview" :style="{ background: `linear-gradient(120deg, ${form.accent}, ${form.accent2})` }">Preview of your brand gradient</div>
     </section>
   </form>
+  <AdminPasswordCard />
+  </div>
 </template>
 
 <style scoped>
-.settings { display: grid; gap: 18px; }
+.page, .settings { display: grid; gap: 18px; }
 .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
 h1 { font-size: 1.8rem; }
 .head p { color: var(--muted); margin-top: 4px; }

@@ -16,9 +16,6 @@ export default defineEventHandler(async () => {
     testimonials: testimonials.filter(t => t.published),
     faqs: faqs.filter(f => f.published),
     // list view only needs the summary, not the full body
-    posts: posts
-      .filter(p => p.published)
-      .sort((a, b) => String(b.date).localeCompare(String(a.date)))
-      .map(({ body, ...rest }) => rest),
+    posts: livePosts(posts).map(({ body, ...rest }) => rest),
   }
 })

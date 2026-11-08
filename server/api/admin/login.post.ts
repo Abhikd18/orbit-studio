@@ -1,10 +1,9 @@
 export default defineEventHandler(async (event) => {
   const { password } = (await readBody<{ password?: string }>(event)) || {}
-  if (!password || password !== adminPassword(event)) {
+  if (!password || !(await checkPassword(event, String(password)))) {
     await new Promise(r => setTimeout(r, 600)) // slow down brute force
     throw createError({ statusCode: 401, statusMessage: 'Wrong password' })
   }
-  const session = await adminSession(event)
-  await session.update({ admin: true })
+  await startAdminSession(event)
   return { ok: true }
 })

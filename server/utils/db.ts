@@ -70,6 +70,36 @@ export function uniqueSlug(items: any[], wanted: string, self = -1) {
   return slug
 }
 
+// ---- blog scheduling ----
+/** A post is live when published AND its publishAt time (if any) has passed. */
+export const isLive = (p: any) =>
+  !!p.published && (!p.publishAt || new Date(p.publishAt).getTime() <= Date.now())
+
+export const postTime = (p: any) => String(p.publishAt || p.date || '')
+
+/** Calendar date (IST) for display, derived from publishAt. */
+export const istDate = (iso: string) =>
+  new Date(new Date(iso).getTime() + 5.5 * 3600e3).toISOString().slice(0, 10)
+
+/** Validates publishAt and keeps the display date in sync with it. */
+export function normalizePost(p: any) {
+  if (p.publishAt) {
+    const t = new Date(p.publishAt)
+    if (Number.isNaN(t.getTime())) throw createError({ statusCode: 400, statusMessage: 'Invalid publish time' })
+    p.publishAt = t.toISOString()
+    p.date = istDate(p.publishAt)
+  }
+  else {
+    p.publishAt = ''
+    if (!p.date) p.date = istDate(new Date().toISOString())
+  }
+  return p
+}
+
+export function livePosts(posts: any[]) {
+  return posts.filter(isLive).sort((a, b) => postTime(b).localeCompare(postTime(a)))
+}
+
 // ---- analytics (page views per day + per page) ----
 export async function trackView(path: string) {
   const day = new Date().toISOString().slice(0, 10)
