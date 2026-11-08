@@ -19,6 +19,7 @@ useHead(() => ({
       <slot />
     </main>
     <SiteFooter v-if="settings" :settings="settings" />
+    <WhatsAppButton v-if="settings?.whatsapp" :number="settings.whatsapp" :brand="settings.brandName" />
   </div>
 </template>
 

@@ -14,6 +14,38 @@ export const seed = {
     location: 'India · Remote worldwide',
     accent: '#7c5cff',
     accent2: '#22d3ee',
+    // WhatsApp number with country code, digits only (e.g. 919876543210). Empty = button hidden.
+    whatsapp: '',
+    linkedin: '',
+    // About section. The founder card shows only when founderName is filled in.
+    aboutTitle: 'A small studio with a big-tech toolkit.',
+    aboutText: 'We are a focused team of designers and engineers. You work directly with the people building your product — no middlemen, no hand-offs. We use the same modern stack as large tech companies, so you get fast, secure and scalable software at a small-studio price.',
+    founderName: '',
+    founderRole: 'Founder & Lead Developer',
+  },
+  // Price calculator. These are PLACEHOLDER prices — set your own in Admin → Estimator.
+  estimator: {
+    currency: '₹',
+    rushMultiplier: 1.25,
+    spread: 0.15, // shows a ±15% range
+    types: [
+      { id: 'website', label: 'Website', price: 15000 },
+      { id: 'webapp', label: 'Web app / Dashboard', price: 30000 },
+      { id: 'mobile', label: 'Mobile app', price: 40000 },
+      { id: 'both', label: 'Website + Mobile app', price: 50000 },
+      { id: 'ecommerce', label: 'E-commerce store', price: 35000 },
+    ],
+    pagePrice: 1500,
+    features: [
+      { id: 'admin', label: 'Admin panel / CMS', price: 10000 },
+      { id: 'auth', label: 'User login & accounts', price: 8000 },
+      { id: 'payments', label: 'Online payments', price: 8000 },
+      { id: 'booking', label: 'Booking / appointments', price: 7000 },
+      { id: 'blog', label: 'Blog', price: 5000 },
+      { id: 'i18n', label: 'Multi-language', price: 6000 },
+      { id: 'seo', label: 'Advanced SEO setup', price: 4000 },
+      { id: 'motion', label: '3D & premium animations', price: 6000 },
+    ],
   },
   services: [
     { id: 's1', icon: 'globe', title: 'Web Development', text: 'SEO-friendly, server-rendered websites and web apps that load instantly on any device.' },
@@ -78,4 +110,34 @@ export const seed = {
     { id: 't1', name: 'Client name', role: 'Founder, Company', quote: 'Replace this with a real testimonial from your client, then publish it.', published: false },
   ],
   messages: [] as any[],
+  faqs: [
+    { id: 'f1', question: 'How long does a website take?', answer: 'A typical business website takes 2–4 weeks from kickoff to launch. Larger web apps and mobile apps usually take 6–12 weeks. You get a clear timeline before we start.', published: true },
+    { id: 'f2', question: 'Do I own the code and the website?', answer: 'Yes. Once the project is paid for, the code, design and content are yours. We hand over the Git repository and all accounts.', published: true },
+    { id: 'f3', question: 'Can I update the content myself?', answer: 'Yes. Every site comes with an admin dashboard where you can edit text, projects, blog posts and more — no coding needed.', published: true },
+    { id: 'f4', question: 'What does hosting cost?', answer: 'Most small and medium sites run on free tiers (Vercel, Upstash). You only pay for a domain name, roughly ₹800–1,000 per year. Costs grow only if your traffic does.', published: true },
+    { id: 'f5', question: 'Can you build a mobile app too?', answer: 'Yes. We build Android and iOS apps from the same codebase as your website, which saves time and money and keeps everything in sync.', published: true },
+    { id: 'f6', question: 'What happens after launch?', answer: 'We offer support and maintenance plans for updates, new features and monitoring. Small fixes in the first month after launch are included.', published: true },
+  ],
+  posts: [
+    {
+      id: 'b1',
+      slug: 'website-or-mobile-app',
+      title: 'Website or mobile app: what does your business need first?',
+      excerpt: 'A practical guide to choosing between a website, a mobile app — or both — without wasting budget.',
+      body: 'Most businesses should start with a fast, well-designed website. It is how customers find you on Google, it works on every device, and it is the cheapest way to get online.\n\nA mobile app makes sense when your customers come back often: ordering, booking, tracking, loyalty programs. Apps can send push notifications and feel faster for repeat use.\n\nThe good news: you no longer have to choose. With a shared codebase, the same project can ship as a website, an installable web app and native Android and iOS apps. Start with the website, then switch on the app when you are ready.',
+      cover: 'linear-gradient(135deg,#7c5cff,#22d3ee)',
+      date: '2026-11-08',
+      published: true,
+    },
+    {
+      id: 'b2',
+      slug: 'why-your-site-needs-an-admin-panel',
+      title: 'Why your website needs an admin panel',
+      excerpt: 'Stop paying a developer every time you want to change a sentence.',
+      body: 'Many small business websites are built as static pages. Every price change, new photo or new service means emailing a developer and waiting.\n\nAn admin panel puts you in control: update content, publish new work, read enquiries and see how many people visit — from your phone or laptop.\n\nIt also makes your website a living asset. Fresh content helps your Google ranking, and a lead inbox means no enquiry gets lost in someone’s email.',
+      cover: 'linear-gradient(135deg,#f472b6,#7c5cff)',
+      date: '2026-11-08',
+      published: true,
+    },
+  ],
 }

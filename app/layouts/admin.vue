@@ -7,6 +7,9 @@ const nav = [
   { to: '/admin/projects', label: 'Projects', icon: 'folder' },
   { to: '/admin/services', label: 'Services', icon: 'spark' },
   { to: '/admin/testimonials', label: 'Testimonials', icon: 'star' },
+  { to: '/admin/posts', label: 'Blog', icon: 'edit' },
+  { to: '/admin/faqs', label: 'FAQ', icon: 'chart' },
+  { to: '/admin/estimator', label: 'Estimator', icon: 'bolt' },
   { to: '/admin/messages', label: 'Messages', icon: 'inbox' },
   { to: '/admin/settings', label: 'Settings', icon: 'cog' },
 ]

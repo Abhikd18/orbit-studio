@@ -1,18 +1,25 @@
 import { seed } from './seed'
 
-export const COLLECTIONS = ['services', 'projects', 'testimonials', 'messages'] as const
+export const COLLECTIONS = ['services', 'projects', 'testimonials', 'messages', 'faqs', 'posts'] as const
 export type CollectionName = (typeof COLLECTIONS)[number]
+/** Collections whose items get a public URL slug. */
+export const SLUGGED: CollectionName[] = ['projects', 'posts']
 
+const SEED_VERSION = 'seeded:v2'
 const db = () => useStorage('db')
 
+/**
+ * Seeds any key that doesn't exist yet. Existing data (e.g. your edited
+ * projects in Redis) is never overwritten, so new features can add new keys safely.
+ */
 async function ensureSeeded() {
   const s = db()
-  if (await s.hasItem('seeded')) return
-  await Promise.all([
-    s.setItem('settings', seed.settings),
-    ...COLLECTIONS.map(c => s.setItem(c, (seed as any)[c])),
-  ])
-  await s.setItem('seeded', true)
+  if (await s.hasItem(SEED_VERSION)) return
+  const keys = ['settings', 'estimator', ...COLLECTIONS] as const
+  await Promise.all(keys.map(async (k) => {
+    if (!(await s.hasItem(k))) await s.setItem(k, (seed as any)[k])
+  }))
+  await s.setItem(SEED_VERSION, true)
 }
 
 export async function getSettings() {
@@ -24,6 +31,16 @@ export async function saveSettings(data: Record<string, any>) {
   const next = { ...(await getSettings()), ...data }
   await db().setItem('settings', next)
   return next
+}
+
+export async function getEstimator() {
+  await ensureSeeded()
+  return { ...seed.estimator, ...((await db().getItem<any>('estimator')) || {}) } as typeof seed.estimator
+}
+
+export async function saveEstimator(data: typeof seed.estimator) {
+  await db().setItem('estimator', data)
+  return data
 }
 
 export async function getCollection<T = any>(name: CollectionName): Promise<T[]> {
@@ -45,6 +62,13 @@ export const uid = () => Date.now().toString(36) + Math.random().toString(36).sl
 
 export const slugify = (s: string) =>
   s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || uid()
+
+/** Unique slug within a collection (ignores the item at index `self`). */
+export function uniqueSlug(items: any[], wanted: string, self = -1) {
+  let slug = slugify(wanted)
+  if (items.some((p, j) => j !== self && p.slug === slug)) slug += '-' + uid().slice(-4)
+  return slug
+}
 
 // ---- analytics (page views per day + per page) ----
 export async function trackView(path: string) {

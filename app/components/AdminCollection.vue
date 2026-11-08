@@ -6,7 +6,7 @@
 export interface Field {
   key: string
   label: string
-  type?: 'text' | 'textarea' | 'select' | 'toggle' | 'tags' | 'gradient' | 'url'
+  type?: 'text' | 'textarea' | 'select' | 'toggle' | 'tags' | 'gradient' | 'url' | 'date'
   options?: string[]
   placeholder?: string
   required?: boolean
@@ -19,6 +19,7 @@ const props = defineProps<{
   titleKey: string
   subtitleKey?: string
   defaults: Record<string, any>
+  viewBase?: string
 }>()
 
 const headers = useRequestHeaders(['cookie'])
@@ -113,7 +114,7 @@ const hasPublished = computed(() => props.fields.some(f => f.key === 'published'
           {{ item.published ? 'Published' : 'Draft' }}
         </button>
         <div class="actions">
-          <NuxtLink v-if="item.slug && item.published" :to="`/projects/${item.slug}`" target="_blank" class="btn btn-sm" title="View"><Icon name="eye" :size="16" /></NuxtLink>
+          <NuxtLink v-if="item.slug && item.published" :to="`${viewBase || '/projects'}/${item.slug}`" target="_blank" class="btn btn-sm" title="View"><Icon name="eye" :size="16" /></NuxtLink>
           <button class="btn btn-sm" title="Edit" @click="openEdit(item)"><Icon name="edit" :size="16" /></button>
           <button class="btn btn-sm btn-danger" title="Delete" @click="remove(item)"><Icon name="trash" :size="16" /></button>
         </div>
@@ -144,7 +145,7 @@ const hasPublished = computed(() => props.fields.some(f => f.key === 'published'
               <div v-else-if="f.type === 'gradient'" class="grads">
                 <button v-for="g in gradients" :key="g" type="button" class="g" :class="{ on: editing[f.key] === g }" :style="{ background: g }" :aria-label="g" @click="editing[f.key] = g" />
               </div>
-              <input v-else :id="`f-${f.key}`" v-model="editing[f.key]" class="input" :type="f.type === 'url' ? 'url' : 'text'" :placeholder="f.placeholder" :required="f.required">
+              <input v-else :id="`f-${f.key}`" v-model="editing[f.key]" class="input" :type="f.type === 'url' ? 'url' : f.type === 'date' ? 'date' : 'text'" :placeholder="f.placeholder" :required="f.required">
             </div>
           </div>
           <p v-if="error" class="err">{{ error }}</p>

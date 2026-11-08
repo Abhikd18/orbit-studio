@@ -21,6 +21,14 @@ const groups = [
     { key: 'email', label: 'Email' },
     { key: 'phone', label: 'Phone' },
     { key: 'location', label: 'Location' },
+    { key: 'whatsapp', label: 'WhatsApp number with country code, e.g. 919876543210 (empty = button hidden)' },
+    { key: 'linkedin', label: 'LinkedIn URL (https://…)' },
+  ] },
+  { title: 'About section', fields: [
+    { key: 'aboutTitle', label: 'Heading' },
+    { key: 'founderName', label: 'Founder name (empty = founder card hidden)' },
+    { key: 'founderRole', label: 'Founder role' },
+    { key: 'aboutText', label: 'About text', textarea: true },
   ] },
 ]
 const presets = [

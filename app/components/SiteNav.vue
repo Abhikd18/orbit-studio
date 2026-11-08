@@ -14,7 +14,8 @@ const links = [
   { to: '/#services', label: 'Services' },
   { to: '/projects', label: 'Work' },
   { to: '/#mobile', label: 'Mobile' },
-  { to: '/#stack', label: 'Stack' },
+  { to: '/#estimate', label: 'Pricing' },
+  { to: '/blog', label: 'Blog' },
   { to: '/#contact', label: 'Contact' },
 ]
 </script>

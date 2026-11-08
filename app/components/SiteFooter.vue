@@ -18,12 +18,17 @@ const year = new Date().getFullYear()
             <NuxtLink to="/#services">Services</NuxtLink>
             <NuxtLink to="/projects">Work</NuxtLink>
             <NuxtLink to="/#mobile">Mobile app</NuxtLink>
+            <NuxtLink to="/#estimate">Price estimate</NuxtLink>
+            <NuxtLink to="/blog">Blog</NuxtLink>
+            <NuxtLink to="/#faq">FAQ</NuxtLink>
           </div>
           <div>
             <h4>Contact</h4>
             <a :href="`mailto:${settings.email}`">{{ settings.email }}</a>
             <a :href="`tel:${settings.phone.replace(/\s/g, '')}`">{{ settings.phone }}</a>
             <span>{{ settings.location }}</span>
+            <a v-if="settings.whatsapp" :href="`https://wa.me/${settings.whatsapp}`" target="_blank" rel="noopener">WhatsApp</a>
+            <a v-if="settings.linkedin" :href="settings.linkedin" target="_blank" rel="noopener">LinkedIn</a>
           </div>
         </div>
       </div>

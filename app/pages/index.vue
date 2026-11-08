@@ -59,6 +59,7 @@ async function install() {
   <div v-if="data">
     <!-- HERO -->
     <section class="hero">
+      <div class="hero-3d"><Hero3D /></div>
       <div class="container hero-inner">
         <div v-reveal class="badge"><span class="live" />{{ s.heroBadge }}</div>
         <h1 v-reveal="80">
@@ -68,7 +69,7 @@ async function install() {
         <p v-reveal="160" class="sub">{{ s.heroSubtitle }}</p>
         <div v-reveal="240" class="ctas">
           <NuxtLink to="/#contact" class="btn btn-primary">{{ s.ctaText }} <Icon name="arrow" :size="18" /></NuxtLink>
-          <NuxtLink to="/projects" class="btn">See our work</NuxtLink>
+          <NuxtLink to="/#estimate" class="btn"><Icon name="bolt" :size="18" /> Instant price estimate</NuxtLink>
         </div>
         <div v-reveal="320" class="metrics">
           <div v-for="m in metrics" :key="m.label" class="metric">
@@ -172,6 +173,33 @@ async function install() {
       </div>
     </section>
 
+    <!-- ABOUT -->
+    <section id="about" class="section">
+      <div class="container about">
+        <div>
+          <span v-reveal class="eyebrow">About us</span>
+          <h2 v-reveal="60">{{ s.aboutTitle }}</h2>
+          <p v-reveal="120" class="lead">{{ s.aboutText }}</p>
+        </div>
+        <div v-reveal="120" class="about-side">
+          <div v-if="s.founderName" class="founder card card-glow">
+            <span class="initials">{{ s.founderName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() }}</span>
+            <div>
+              <b>{{ s.founderName }}</b>
+              <span>{{ s.founderRole }}</span>
+            </div>
+            <a v-if="s.linkedin" :href="s.linkedin" target="_blank" rel="noopener" class="btn btn-sm">LinkedIn <Icon name="external" :size="14" /></a>
+          </div>
+          <ul class="promises">
+            <li><Icon name="check" :size="18" /> You own 100% of the code</li>
+            <li><Icon name="check" :size="18" /> Fixed quotes, no surprise bills</li>
+            <li><Icon name="check" :size="18" /> Direct line to the people building it</li>
+            <li><Icon name="check" :size="18" /> Weekly progress updates and previews</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     <!-- TESTIMONIALS (only shown when published from admin) -->
     <section v-if="data.testimonials.length" class="section">
       <div class="container">
@@ -185,6 +213,46 @@ async function install() {
             <figcaption><b>{{ t.name }}</b><span>{{ t.role }}</span></figcaption>
           </figure>
         </div>
+      </div>
+    </section>
+
+    <!-- ESTIMATOR -->
+    <section id="estimate" class="section">
+      <div class="container">
+        <div v-reveal class="section-head">
+          <span class="eyebrow">Price calculator</span>
+          <h2>What will your project <span class="grad-text">cost</span>?</h2>
+          <p>Pick what you need and get an instant ballpark. No sign-up, no sales call.</p>
+        </div>
+        <div v-reveal="80"><Estimator :config="data.estimator" /></div>
+      </div>
+    </section>
+
+    <!-- BLOG -->
+    <section v-if="data.posts.length" id="blog" class="section">
+      <div class="container">
+        <div class="head-row">
+          <div v-reveal class="section-head">
+            <span class="eyebrow">Insights</span>
+            <h2>From the <span class="grad-text">blog</span></h2>
+          </div>
+          <NuxtLink v-reveal to="/blog" class="btn">All articles <Icon name="arrow" :size="18" /></NuxtLink>
+        </div>
+        <div class="posts">
+          <PostCard v-for="(p, i) in data.posts.slice(0, 3)" :key="p.id" v-reveal="i * 80" :post="p" />
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section v-if="data.faqs.length" id="faq" class="section">
+      <div class="container faq-wrap">
+        <div v-reveal class="section-head">
+          <span class="eyebrow">FAQ</span>
+          <h2>Questions, <span class="grad-text">answered</span>.</h2>
+          <p>Still curious? <NuxtLink to="/#contact" class="link">Ask us anything</NuxtLink>.</p>
+        </div>
+        <FaqList :faqs="data.faqs" />
       </div>
     </section>
 
@@ -207,8 +275,24 @@ async function install() {
 </template>
 
 <style scoped>
-.hero { position: relative; padding: 170px 0 0; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
-.hero-inner { text-align: center; display: flex; flex-direction: column; align-items: center; }
+.hero { position: relative; overflow: hidden; padding: 170px 0 0; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
+.hero-inner { position: relative; text-align: center; display: flex; flex-direction: column; align-items: center; }
+.hero-3d { position: absolute; left: 50%; top: 60px; width: min(900px, 120vw); aspect-ratio: 1; transform: translateX(-50%); opacity: .55; pointer-events: none; mask-image: radial-gradient(circle, #000 35%, transparent 70%); -webkit-mask-image: radial-gradient(circle, #000 35%, transparent 70%); }
+
+.about { display: grid; grid-template-columns: 1.1fr .9fr; gap: 60px; align-items: center; }
+.about h2, .faq-wrap h2 { font-size: clamp(2rem, 4.5vw, 3.2rem); margin-top: 14px; }
+.about-side { display: grid; gap: 18px; }
+.founder { display: flex; align-items: center; gap: 16px; padding: 20px; flex-wrap: wrap; }
+.founder > div { flex: 1; display: grid; min-width: 140px; }
+.founder span:not(.initials) { color: var(--muted); font-size: .9rem; }
+.initials { width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; background: var(--grad); font-family: var(--font-head); font-weight: 700; font-size: 1.2rem; box-shadow: 0 0 30px color-mix(in srgb, var(--accent) 50%, transparent); }
+.promises { list-style: none; margin: 0; padding: 22px; display: grid; gap: 14px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+.promises li { display: flex; gap: 12px; align-items: center; }
+.promises :deep(svg) { color: var(--success); flex: none; }
+.posts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.faq-wrap { display: grid; grid-template-columns: .8fr 1.2fr; gap: 60px; align-items: start; }
+.faq-wrap .section-head { margin-bottom: 0; position: sticky; top: 100px; }
+.link { color: var(--accent-2); text-decoration: underline; text-underline-offset: 3px; }
 .badge { display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--border-strong); background: rgba(255,255,255,.04); backdrop-filter: blur(10px); font-size: .85rem; color: var(--muted); }
 .live { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 0 var(--success); animation: ping 2s infinite; }
 @keyframes ping { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--success) 70%, transparent); } 100% { box-shadow: 0 0 0 10px transparent; } }
@@ -272,6 +356,9 @@ async function install() {
 .contact-list a:hover { color: var(--text); }
 
 @media (max-width: 960px) {
+  .about, .faq-wrap { grid-template-columns: 1fr; gap: 36px; }
+  .faq-wrap .section-head { position: static; }
+  .posts { grid-template-columns: repeat(2, 1fr); }
   .services, .projects { grid-template-columns: repeat(2, 1fr); }
   .stack, .process { grid-template-columns: repeat(2, 1fr); }
   .mobile, .contact { grid-template-columns: 1fr; }
@@ -281,7 +368,7 @@ async function install() {
   .metrics { grid-template-columns: repeat(2, 1fr); margin-top: 56px; }
   .metric:nth-child(3) { border-left: 0; }
   .metric:nth-child(n+3) { border-top: 1px solid var(--border); }
-  .services, .projects, .process { grid-template-columns: 1fr; }
+  .services, .projects, .process, .posts { grid-template-columns: 1fr; }
   .ring { width: 340px; }
 }
 </style>
