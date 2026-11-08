@@ -75,6 +75,7 @@ export const safeImageUrl = (v: unknown) => (typeof v === 'string' && /^https:\/
 
 export function sanitizeImages(item: Record<string, any>) {
   for (const key of ['image']) if (key in item) item[key] = safeImageUrl(item[key])
+  if ('gallery' in item) item.gallery = (Array.isArray(item.gallery) ? item.gallery : []).map(safeImageUrl).filter(Boolean).slice(0, 20)
   return item
 }
 

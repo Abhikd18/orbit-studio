@@ -8,7 +8,20 @@ const { data, error } = await useFetch<{ project: Project, next: Project | null 
 if (error.value) throw createError({ statusCode: 404, statusMessage: 'Project not found', fatal: true })
 const p = computed(() => data.value!.project)
 const paragraphs = computed(() => (p.value.body || '').split(/\n\s*\n/).filter(Boolean))
-useSeoMeta({ title: () => p.value.title, description: () => p.value.summary, ogTitle: () => p.value.title, ogDescription: () => p.value.summary })
+useSeoMeta({ title: () => p.value.title, description: () => p.value.summary, ogTitle: () => p.value.title, ogDescription: () => p.value.summary, ogImage: () => p.value.image })
+
+// gallery lightbox
+const gallery = computed(() => p.value.gallery || [])
+const lb = ref<number | null>(null)
+const step = (d: number) => { if (lb.value !== null) lb.value = (lb.value + d + gallery.value.length) % gallery.value.length }
+function onKey(e: KeyboardEvent) {
+  if (lb.value === null) return
+  if (e.key === 'Escape') lb.value = null
+  if (e.key === 'ArrowRight') step(1)
+  if (e.key === 'ArrowLeft') step(-1)
+}
+onMounted(() => window.addEventListener('keydown', onKey))
+onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 </script>
 
 <template>
@@ -40,6 +53,27 @@ useSeoMeta({ title: () => p.value.title, description: () => p.value.summary, ogT
           <NuxtLink to="/#contact" class="btn">Start a similar project</NuxtLink>
         </aside>
       </div>
+      <section v-if="gallery.length" class="gallery">
+        <h2>Screens</h2>
+        <div class="gal">
+          <button v-for="(url, i) in gallery" :key="url" v-reveal="(i % 2) * 80" class="shot" :aria-label="`Open screenshot ${i + 1}`" @click="lb = i">
+            <img :src="url" :alt="`${p.title} screenshot ${i + 1}`" loading="lazy">
+          </button>
+        </div>
+      </section>
+      <Teleport to="body">
+        <Transition name="lb">
+          <div v-if="lb !== null" class="lightbox" role="dialog" aria-modal="true" :aria-label="`Screenshot ${lb + 1} of ${gallery.length}`" @click.self="lb = null">
+            <img :src="gallery[lb]" :alt="`${p.title} screenshot ${lb + 1}`">
+            <button class="lb-btn lb-close" aria-label="Close" @click="lb = null"><Icon name="close" /></button>
+            <template v-if="gallery.length > 1">
+              <button class="lb-btn lb-prev" aria-label="Previous" @click="step(-1)"><Icon name="arrowLeft" /></button>
+              <button class="lb-btn lb-next" aria-label="Next" @click="step(1)"><Icon name="arrow" /></button>
+            </template>
+            <span class="count">{{ lb + 1 }} / {{ gallery.length }}</span>
+          </div>
+        </Transition>
+      </Teleport>
       <NuxtLink v-if="data.next" :to="`/projects/${data.next.slug}`" class="next card card-glow">
         <small>Next project</small>
         <b>{{ data.next.title }}</b>
@@ -58,6 +92,21 @@ h1 { font-size: clamp(2.4rem, 6vw, 4.6rem); margin-top: 14px; }
 .summary { color: var(--muted); font-size: 1.2rem; margin-top: 18px; }
 .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
 .hero-cover { position: relative; margin-top: 50px; aspect-ratio: 21 / 9; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+.gallery { margin-top: 80px; }
+.gallery h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin-bottom: 24px; }
+.gal { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+.shot { padding: 0; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; cursor: zoom-in; background: var(--surface); transition: transform .3s, border-color .3s; }
+.shot:hover, .shot:focus-visible { transform: translateY(-4px); border-color: var(--border-strong); outline: none; }
+.shot img { display: block; width: 100%; height: auto; }
+.lightbox { position: fixed; inset: 0; z-index: 200; background: rgba(3,4,10,.92); backdrop-filter: blur(8px); display: grid; place-items: center; padding: 60px 70px; }
+.lightbox img { max-width: 100%; max-height: 100%; border-radius: 12px; box-shadow: 0 40px 120px rgba(0,0,0,.6); }
+.lb-btn { position: absolute; width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--border-strong); background: rgba(255,255,255,.08); color: #fff; display: grid; place-items: center; cursor: pointer; }
+.lb-btn:hover { background: rgba(255,255,255,.18); }
+.lb-close { top: 16px; right: 16px; } .lb-prev { left: 14px; top: 50%; transform: translateY(-50%); } .lb-next { right: 14px; top: 50%; transform: translateY(-50%); }
+.count { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); color: var(--muted); font-size: .85rem; }
+.lb-enter-active, .lb-leave-active { transition: opacity .2s; }
+.lb-enter-from, .lb-leave-to { opacity: 0; }
+@media (max-width: 700px) { .gal { grid-template-columns: 1fr; } .lightbox { padding: 60px 10px; } .lb-prev, .lb-next { top: auto; bottom: 10px; transform: none; } }
 .hero-shot { margin-top: 50px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); box-shadow: 0 40px 100px -30px rgba(0,0,0,.7); }
 .hero-shot img { display: block; width: 100%; height: auto; }
 .grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px); background-size: 40px 40px; mask-image: radial-gradient(circle at 70% 40%, #000, transparent 70%); -webkit-mask-image: radial-gradient(circle at 70% 40%, #000, transparent 70%); }

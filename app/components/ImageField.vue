@@ -10,30 +10,13 @@ const busy = ref(false)
 const error = ref('')
 const dragging = ref(false)
 
-async function compress(file: File): Promise<Blob> {
-  if (file.type === 'image/gif') return file // keep animations
-  const bmp = await createImageBitmap(file)
-  const scale = Math.min(1, 1920 / Math.max(bmp.width, bmp.height))
-  const canvas = document.createElement('canvas')
-  canvas.width = Math.round(bmp.width * scale)
-  canvas.height = Math.round(bmp.height * scale)
-  canvas.getContext('2d')!.drawImage(bmp, 0, 0, canvas.width, canvas.height)
-  bmp.close()
-  const blob = await new Promise<Blob | null>(r => canvas.toBlob(r, 'image/webp', 0.86))
-  return blob && blob.size < file.size ? blob : file
-}
-
 async function upload(file?: File | null) {
   if (!file) return
   error.value = ''
   if (!file.type.startsWith('image/')) return (error.value = 'Please choose an image file')
   busy.value = true
   try {
-    const blob = await compress(file)
-    const fd = new FormData()
-    fd.append('file', blob, file.name)
-    const res = await $fetch<{ url: string }>(`/api/admin/upload?folder=${props.folder}`, { method: 'POST', body: fd })
-    model.value = res.url
+    model.value = await uploadImage(file, props.folder)
   }
   catch (e: any) {
     error.value = e?.data?.statusMessage || 'Upload failed'

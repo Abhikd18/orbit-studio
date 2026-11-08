@@ -9,7 +9,7 @@ definePageMeta({ layout: 'admin', middleware: 'admin' })
     description="Your portfolio. Each project gets its own page at /projects/your-slug."
     title-key="title"
     subtitle-key="summary"
-    :defaults="{ title: '', slug: '', category: 'Web', summary: '', body: '', tagsText: '', gradient: 'linear-gradient(135deg,#7c5cff,#22d3ee)', link: '', featured: false, published: true }"
+    :defaults="{ title: '', slug: '', category: 'Web', summary: '', body: '', tagsText: '', gradient: 'linear-gradient(135deg,#7c5cff,#22d3ee)', link: '', gallery: [], featured: false, published: true }"
     :fields="[
       { key: 'title', label: 'Title', required: true, placeholder: 'Acme e-commerce store' },
       { key: 'slug', label: 'URL slug (optional)', placeholder: 'acme-store' },
@@ -18,6 +18,7 @@ definePageMeta({ layout: 'admin', middleware: 'admin' })
       { key: 'body', label: 'Full description (blank line = new paragraph)', type: 'textarea' },
       { key: 'tags', label: 'Tags / tech', type: 'tags' },
       { key: 'image', label: 'Cover image — screenshot of the project (recommended)', type: 'image' },
+      { key: 'gallery', label: 'More screenshots (shown as a gallery on the project page)', type: 'gallery' },
       { key: 'gradient', label: 'Fallback colour (used when there is no image)', type: 'gradient' },
       { key: 'link', label: 'Live URL', type: 'url', placeholder: 'https://…' },
       { key: 'featured', label: 'Show on home page', type: 'toggle' },

@@ -39,6 +39,7 @@ export interface Project {
   tags: string[]
   gradient: string
   image?: string
+  gallery?: string[]
   link?: string
   featured: boolean
   published: boolean

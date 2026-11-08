@@ -6,7 +6,7 @@
 export interface Field {
   key: string
   label: string
-  type?: 'text' | 'textarea' | 'select' | 'toggle' | 'tags' | 'gradient' | 'url' | 'date' | 'datetime' | 'image'
+  type?: 'text' | 'textarea' | 'select' | 'toggle' | 'tags' | 'gradient' | 'url' | 'date' | 'datetime' | 'image' | 'gallery'
   options?: string[]
   placeholder?: string
   required?: boolean
@@ -162,6 +162,7 @@ const hasPublished = computed(() => props.fields.some(f => f.key === 'published'
                 <span>{{ editing[f.key] ? 'Yes' : 'No' }}</span>
               </label>
               <input v-else-if="f.type === 'tags'" :id="`f-${f.key}`" v-model="editing.tagsText" class="input" :placeholder="f.placeholder || 'Comma, separated, tags'">
+              <GalleryField v-else-if="f.type === 'gallery'" v-model="editing[f.key]" :folder="collection" />
               <ImageField v-else-if="f.type === 'image'" v-model="editing[f.key]" :folder="collection" />
               <div v-else-if="f.type === 'gradient'" class="grads">
                 <button v-for="g in gradients" :key="g" type="button" class="g" :class="{ on: editing[f.key] === g }" :style="{ background: g }" :aria-label="g" @click="editing[f.key] = g" />
