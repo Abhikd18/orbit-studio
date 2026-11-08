@@ -16,7 +16,8 @@ definePageMeta({ layout: 'admin', middleware: 'admin' })
       { key: 'slug', label: 'URL slug (optional)', placeholder: 'my-article' },
       { key: 'excerpt', label: 'Short summary (shown on cards & Google)', required: true },
       { key: 'body', label: 'Article (blank line = new paragraph)', type: 'textarea', required: true },
-      { key: 'cover', label: 'Cover colour', type: 'gradient' },
+      { key: 'image', label: 'Cover image (optional)', type: 'image' },
+      { key: 'cover', label: 'Fallback colour', type: 'gradient' },
       { key: 'publishAt', label: 'Publish time (empty = now, future = scheduled)', type: 'datetime' },
       { key: 'published', label: 'Published', type: 'toggle' },
     ]"

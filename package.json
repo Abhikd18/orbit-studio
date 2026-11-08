@@ -16,6 +16,7 @@
   "dependencies": {
     "@capacitor/core": "^8.6.0",
     "@upstash/redis": "^1.41.0",
+    "@vercel/blob": "^2.8.2",
     "nuxt": "^4.6.4",
     "three": "^0.187.0",
     "vue": "^3.5.45",

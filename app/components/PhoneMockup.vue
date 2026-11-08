@@ -19,7 +19,8 @@ defineProps<{ brand: string, projects: Project[] }>()
       </div>
       <div class="list">
         <div v-for="(p, i) in projects.slice(0, 3)" :key="p.id" class="item" :style="{ animationDelay: `${i * 0.15}s` }">
-          <span class="thumb" :style="{ background: p.gradient }" />
+          <img v-if="p.image" :src="p.image" alt="" class="thumb" loading="lazy">
+          <span v-else class="thumb" :style="{ background: p.gradient }" />
           <div>
             <b>{{ p.title }}</b>
             <small>{{ p.category }} · Live</small>
@@ -47,7 +48,7 @@ defineProps<{ brand: string, projects: Project[] }>()
 .item { display: flex; gap: 10px; align-items: center; padding: 10px; border-radius: 16px; background: rgba(255,255,255,.06); border: 1px solid var(--border); animation: slide .8s both cubic-bezier(.2,.7,.2,1); }
 .item b { display: block; font-size: .78rem; line-height: 1.3; }
 .item small { color: var(--muted); font-size: .68rem; }
-.thumb { width: 38px; height: 38px; border-radius: 12px; flex: none; }
+.thumb { width: 38px; height: 38px; border-radius: 12px; flex: none; object-fit: cover; object-position: top; }
 .tabbar { display: flex; justify-content: space-around; padding: 14px 0 22px; margin: 0 -16px; border-top: 1px solid var(--border); background: rgba(255,255,255,.03); color: var(--muted); }
 .tabbar :first-child { color: var(--accent-2); }
 @keyframes bob { 50% { transform: translateY(-14px) rotate(-1deg); } }

@@ -16,6 +16,7 @@ export interface Settings {
   aboutText: string
   founderName: string
   founderRole: string
+  founderPhoto?: string
 }
 export interface PriceItem { id: string, label: string, price: number }
 export interface EstimatorConfig {
@@ -27,7 +28,7 @@ export interface EstimatorConfig {
   features: PriceItem[]
 }
 export interface Faq { id: string, question: string, answer: string, published: boolean }
-export interface Post { id: string, slug: string, title: string, excerpt: string, body?: string, cover: string, date: string, published: boolean }
+export interface Post { id: string, slug: string, title: string, excerpt: string, body?: string, cover: string, image?: string, date: string, published: boolean }
 export interface Project {
   id: string
   slug: string
@@ -37,6 +38,7 @@ export interface Project {
   body: string
   tags: string[]
   gradient: string
+  image?: string
   link?: string
   featured: boolean
   published: boolean

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const route = useRoute()
+const { data: content } = await useContent()
 const open = ref(false)
 watch(() => route.fullPath, () => (open.value = false))
 const nav = [
@@ -23,7 +24,7 @@ useHead({ title: 'Admin', meta: [{ name: 'robots', content: 'noindex' }] })
 <template>
   <div class="admin">
     <aside class="side" :class="{ open }">
-      <NuxtLink to="/admin" class="logo"><span class="mark" /> Orbit Admin</NuxtLink>
+      <NuxtLink to="/admin" class="logo"><span class="mark" /> {{ content?.settings.brandName || 'Admin' }}</NuxtLink>
       <nav>
         <NuxtLink v-for="n in nav" :key="n.to" :to="n.to" :class="{ active: n.to === '/admin' ? route.path === '/admin' : route.path.startsWith(n.to) }">
           <Icon :name="n.icon" :size="18" /> {{ n.label }}

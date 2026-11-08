@@ -22,6 +22,7 @@ export const seed = {
     aboutText: 'We are a focused team of designers and engineers. You work directly with the people building your product — no middlemen, no hand-offs. We use the same modern stack as large tech companies, so you get fast, secure and scalable software at a small-studio price.',
     founderName: '',
     founderRole: 'Founder & Lead Developer',
+    founderPhoto: '',
   },
   // Price calculator. These are PLACEHOLDER prices — set your own in Admin → Estimator.
   estimator: {

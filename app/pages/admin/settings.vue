@@ -28,6 +28,7 @@ const groups = [
     { key: 'aboutTitle', label: 'Heading' },
     { key: 'founderName', label: 'Founder name (empty = founder card hidden)' },
     { key: 'founderRole', label: 'Founder role' },
+    { key: 'founderPhoto', label: 'Founder photo (a real photo of you builds the most trust)', image: true },
     { key: 'aboutText', label: 'About text', textarea: true },
   ] },
 ]
@@ -71,7 +72,8 @@ async function save() {
       <div class="grid">
         <div v-for="f in g.fields" :key="f.key" class="field" :class="{ wide: f.textarea }">
           <label :for="f.key">{{ f.label }}</label>
-          <textarea v-if="f.textarea" :id="f.key" v-model="form[f.key]" class="input" rows="3" />
+          <ImageField v-if="f.image" v-model="form[f.key]" folder="team" round />
+          <textarea v-else-if="f.textarea" :id="f.key" v-model="form[f.key]" class="input" rows="3" />
           <input v-else :id="f.key" v-model="form[f.key]" class="input">
         </div>
       </div>

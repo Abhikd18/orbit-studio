@@ -70,6 +70,14 @@ export function uniqueSlug(items: any[], wanted: string, self = -1) {
   return slug
 }
 
+/** Image fields may only hold https URLs (blocks javascript: and similar). */
+export const safeImageUrl = (v: unknown) => (typeof v === 'string' && /^https:\/\/[^\s"'<>]+$/.test(v) ? v : '')
+
+export function sanitizeImages(item: Record<string, any>) {
+  for (const key of ['image']) if (key in item) item[key] = safeImageUrl(item[key])
+  return item
+}
+
 // ---- blog scheduling ----
 /** A post is live when published AND its publishAt time (if any) has passed. */
 export const isLive = (p: any) =>

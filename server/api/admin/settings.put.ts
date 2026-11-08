@@ -1,7 +1,7 @@
 const ALLOWED = [
   'brandName', 'heroBadge', 'heroTitle', 'heroHighlight', 'heroSubtitle', 'ctaText',
   'email', 'phone', 'location', 'accent', 'accent2',
-  'whatsapp', 'linkedin', 'aboutTitle', 'aboutText', 'founderName', 'founderRole',
+  'whatsapp', 'linkedin', 'aboutTitle', 'aboutText', 'founderName', 'founderRole', 'founderPhoto',
 ]
 
 export default defineEventHandler(async (event) => {
@@ -14,6 +14,7 @@ export default defineEventHandler(async (event) => {
     if (key in data && !/^#[0-9a-f]{3,8}$/i.test(data[key]!))
       throw createError({ statusCode: 400, statusMessage: `${key} must be a hex colour like #7c5cff` })
   }
+  if ('founderPhoto' in data) data.founderPhoto = safeImageUrl(data.founderPhoto)
   if ('whatsapp' in data) data.whatsapp = data.whatsapp!.replace(/\D/g, '')
   if (data.linkedin && !/^https:\/\//.test(data.linkedin))
     throw createError({ statusCode: 400, statusMessage: 'LinkedIn must be a full https:// link' })

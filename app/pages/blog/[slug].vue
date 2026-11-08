@@ -45,7 +45,8 @@ useHead(() => ({
         <h1>{{ post.title }}</h1>
         <p class="excerpt">{{ post.excerpt }}</p>
       </header>
-      <div v-reveal="80" class="cover" :style="{ background: post.cover }" />
+      <img v-if="post.image" v-reveal="80" :src="post.image" alt="" class="cover-img">
+      <div v-else v-reveal="80" class="cover" :style="{ background: post.cover }" />
       <div class="body">
         <p v-for="(para, i) in paragraphs" :key="i">{{ para }}</p>
       </div>
@@ -78,6 +79,7 @@ useHead(() => ({
 h1 { font-size: clamp(2.1rem, 5vw, 3.4rem); margin-top: 14px; }
 .excerpt { color: var(--muted); font-size: 1.2rem; margin-top: 16px; }
 .cover { height: 220px; border-radius: var(--radius); margin: 40px 0; border: 1px solid var(--border); background-size: cover; }
+.cover-img { width: 100%; height: auto; max-height: 440px; object-fit: cover; border-radius: var(--radius); margin: 40px 0; border: 1px solid var(--border); }
 .body { display: grid; gap: 22px; font-size: 1.12rem; line-height: 1.8; color: #d4d8ee; }
 .cta { margin-top: 56px; padding: 24px; display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap; }
 .cta p { color: var(--muted); font-size: .92rem; }

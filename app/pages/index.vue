@@ -183,7 +183,8 @@ async function install() {
         </div>
         <div v-reveal="120" class="about-side">
           <div v-if="s.founderName" class="founder card card-glow">
-            <span class="initials">{{ s.founderName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() }}</span>
+            <img v-if="s.founderPhoto" :src="s.founderPhoto" :alt="s.founderName" class="initials photo">
+            <span v-else class="initials">{{ s.founderName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() }}</span>
             <div>
               <b>{{ s.founderName }}</b>
               <span>{{ s.founderRole }}</span>
@@ -286,6 +287,7 @@ async function install() {
 .founder > div { flex: 1; display: grid; min-width: 140px; }
 .founder span:not(.initials) { color: var(--muted); font-size: .9rem; }
 .initials { width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; background: var(--grad); font-family: var(--font-head); font-weight: 700; font-size: 1.2rem; box-shadow: 0 0 30px color-mix(in srgb, var(--accent) 50%, transparent); }
+.initials.photo { object-fit: cover; width: 72px; height: 72px; }
 .promises { list-style: none; margin: 0; padding: 22px; display: grid; gap: 14px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
 .promises li { display: flex; gap: 12px; align-items: center; }
 .promises :deep(svg) { color: var(--success); flex: none; }

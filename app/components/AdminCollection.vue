@@ -6,7 +6,7 @@
 export interface Field {
   key: string
   label: string
-  type?: 'text' | 'textarea' | 'select' | 'toggle' | 'tags' | 'gradient' | 'url' | 'date' | 'datetime'
+  type?: 'text' | 'textarea' | 'select' | 'toggle' | 'tags' | 'gradient' | 'url' | 'date' | 'datetime' | 'image'
   options?: string[]
   placeholder?: string
   required?: boolean
@@ -123,7 +123,8 @@ const hasPublished = computed(() => props.fields.some(f => f.key === 'published'
 
     <div class="list">
       <div v-for="item in sorted" :key="item.id" class="row card">
-        <span v-if="item.gradient || item.cover" class="sw" :style="{ background: item.gradient || item.cover }" />
+        <img v-if="item.image" :src="item.image" alt="" class="sw img">
+        <span v-else-if="item.gradient || item.cover" class="sw" :style="{ background: item.gradient || item.cover }" />
         <span v-else-if="item.icon" class="sw icon"><Icon :name="item.icon" :size="18" /></span>
         <div class="txt">
           <b>{{ item[titleKey] }}</b>
@@ -161,6 +162,7 @@ const hasPublished = computed(() => props.fields.some(f => f.key === 'published'
                 <span>{{ editing[f.key] ? 'Yes' : 'No' }}</span>
               </label>
               <input v-else-if="f.type === 'tags'" :id="`f-${f.key}`" v-model="editing.tagsText" class="input" :placeholder="f.placeholder || 'Comma, separated, tags'">
+              <ImageField v-else-if="f.type === 'image'" v-model="editing[f.key]" :folder="collection" />
               <div v-else-if="f.type === 'gradient'" class="grads">
                 <button v-for="g in gradients" :key="g" type="button" class="g" :class="{ on: editing[f.key] === g }" :style="{ background: g }" :aria-label="g" @click="editing[f.key] = g" />
               </div>
@@ -187,6 +189,7 @@ h1 { font-size: 1.8rem; }
 .list { display: grid; gap: 10px; }
 .row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; }
 .sw { width: 44px; height: 44px; border-radius: 12px; flex: none; }
+.sw.img { object-fit: cover; border: 1px solid var(--border); }
 .sw.icon { display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 22%, transparent); }
 .txt { flex: 1; min-width: 0; display: grid; }
 .txt span { color: var(--muted); font-size: .88rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
