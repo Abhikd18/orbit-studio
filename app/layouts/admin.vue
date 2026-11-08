@@ -1,6 +1,10 @@
 <script setup lang="ts">
 const route = useRoute()
 const { data: content } = await useContent()
+// use the brand colours from Settings in the admin too
+useHead(() => ({
+  htmlAttrs: { style: `--accent:${content.value?.settings.accent || '#7c5cff'};--accent-2:${content.value?.settings.accent2 || '#22d3ee'}` },
+}))
 const open = ref(false)
 watch(() => route.fullPath, () => (open.value = false))
 const nav = [
