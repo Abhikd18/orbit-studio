@@ -21,7 +21,7 @@ useSeoMeta({ title: () => p.value.title, description: () => p.value.summary, ogT
         <p class="summary">{{ p.summary }}</p>
         <div class="tags"><span v-for="t in p.tags" :key="t" class="tag">{{ t }}</span></div>
       </header>
-      <div v-if="p.image" v-reveal="100" class="hero-shot" :style="{ background: p.gradient }">
+      <div v-if="p.image" v-reveal="100" class="hero-shot">
         <img :src="p.image" :alt="`Screenshot of ${p.title}`">
       </div>
       <div v-else v-reveal="100" class="hero-cover" :style="{ background: p.gradient }">
@@ -58,8 +58,8 @@ h1 { font-size: clamp(2.4rem, 6vw, 4.6rem); margin-top: 14px; }
 .summary { color: var(--muted); font-size: 1.2rem; margin-top: 18px; }
 .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
 .hero-cover { position: relative; margin-top: 50px; aspect-ratio: 21 / 9; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
-.hero-shot { margin-top: 50px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); padding: clamp(10px, 3vw, 36px); }
-.hero-shot img { width: 100%; height: auto; border-radius: 12px; box-shadow: 0 30px 80px -20px rgba(0,0,0,.6); }
+.hero-shot { margin-top: 50px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); box-shadow: 0 40px 100px -30px rgba(0,0,0,.7); }
+.hero-shot img { display: block; width: 100%; height: auto; }
 .grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px); background-size: 40px 40px; mask-image: radial-gradient(circle at 70% 40%, #000, transparent 70%); -webkit-mask-image: radial-gradient(circle at 70% 40%, #000, transparent 70%); }
 .orb { position: absolute; width: 34%; aspect-ratio: 1; right: 10%; top: 10%; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,.2) 40%, transparent 70%); animation: drift 10s ease-in-out infinite; }
 .o2 { width: 16%; right: auto; left: 12%; top: 55%; opacity: .7; animation-duration: 14s; }
