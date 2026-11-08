@@ -7,11 +7,18 @@ const cards = computed(() => {
   const c = data.value?.counts || {}
   return [
     { label: 'Total page views', value: c.totalViews, icon: 'eye' },
-    { label: 'Messages', value: c.messages, sub: `${c.unread || 0} unread`, icon: 'inbox', to: '/admin/messages' },
+    { label: 'Leads', value: c.messages, sub: `${c.unread || 0} unread`, icon: 'inbox', to: '/admin/leads' },
     { label: 'Projects', value: c.projects, icon: 'folder', to: '/admin/projects' },
     { label: 'Services', value: c.services, icon: 'spark', to: '/admin/services' },
   ]
 })
+const stages = [
+  { id: 'new', label: 'New', color: '#22d3ee' },
+  { id: 'contacted', label: 'Contacted', color: '#a78bfa' },
+  { id: 'proposal', label: 'Proposal', color: '#fbbf24' },
+  { id: 'won', label: 'Won', color: '#34d399' },
+  { id: 'lost', label: 'Lost', color: '#fb7185' },
+]
 const fmtDay = (d: string) => new Date(d).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })
 </script>
 
@@ -41,6 +48,34 @@ const fmtDay = (d: string) => new Date(d).toLocaleDateString(undefined, { day: '
 
     <div class="row">
       <section class="panel card">
+        <header><h2>Sales pipeline</h2><NuxtLink to="/admin/leads" class="btn btn-sm">Open board</NuxtLink></header>
+        <div class="pipe">
+          <NuxtLink v-for="s in stages" :key="s.id" to="/admin/leads" class="stage">
+            <i :style="{ background: s.color }" />
+            <span>{{ s.label }}</span>
+            <b>{{ data.pipeline[s.id] || 0 }}</b>
+          </NuxtLink>
+        </div>
+        <div class="money">
+          <div><small>Open pipeline</small><b>{{ formatMoney(data.openValue, data.currency) }}</b></div>
+          <div><small>Won</small><b class="won">{{ formatMoney(data.wonValue, data.currency) }}</b></div>
+          <div><small>Proposals awaiting reply</small><b>{{ data.proposalsOpen }}</b></div>
+        </div>
+      </section>
+      <section class="panel card">
+        <header><h2>Follow-ups due</h2></header>
+        <ul v-if="data.followUps.length" class="fus">
+          <li v-for="f in data.followUps" :key="f.id">
+            <NuxtLink to="/admin/leads">{{ f.name }}</NuxtLink>
+            <span :class="{ overdue: f.overdue }">{{ f.overdue ? `overdue · ${f.followUp}` : 'today' }}</span>
+          </li>
+        </ul>
+        <p v-else class="muted">Nothing due. Set follow-up dates on leads to get reminders here and by email.</p>
+      </section>
+    </div>
+
+    <div class="row">
+      <section class="panel card">
         <header><h2>Page views</h2><span class="muted">Last 14 days</span></header>
         <div class="chart" role="img" :aria-label="`Page views over the last 14 days, peak ${max}`">
           <div v-for="d in data.days" :key="d.day" class="bar-col">
@@ -65,7 +100,7 @@ const fmtDay = (d: string) => new Date(d).toLocaleDateString(undefined, { day: '
     </div>
 
     <section class="panel card">
-      <header><h2>Latest messages</h2><NuxtLink to="/admin/messages" class="btn btn-sm">View all</NuxtLink></header>
+      <header><h2>Latest leads</h2><NuxtLink to="/admin/leads" class="btn btn-sm">View all</NuxtLink></header>
       <div v-if="data.recentMessages.length" class="msgs">
         <div v-for="m in data.recentMessages" :key="m.id" class="msg">
           <span class="avatar">{{ m.name[0]?.toUpperCase() }}</span>
@@ -99,6 +134,20 @@ const fmtDay = (d: string) => new Date(d).toLocaleDateString(undefined, { day: '
 .panel { padding: 22px; }
 .panel header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; gap: 10px; }
 .panel h2 { font-size: 1.1rem; }
+.pipe { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.stage { display: grid; gap: 4px; padding: 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); font-size: .8rem; color: var(--muted); }
+.stage:hover { border-color: var(--border-strong); }
+.stage i { width: 8px; height: 8px; border-radius: 50%; }
+.stage b { font-family: var(--font-head); font-size: 1.5rem; color: var(--text); }
+.money { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+.money div { display: grid; }
+.money small { color: var(--muted); font-size: .78rem; }
+.money b { font-family: var(--font-head); font-size: 1.25rem; }
+.money .won { color: var(--success); }
+.fus { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.fus li { display: flex; justify-content: space-between; gap: 10px; font-size: .9rem; }
+.fus span { color: #fbbf24; font-size: .8rem; }
+.fus span.overdue { color: #fb7185; }
 .chart { display: flex; align-items: flex-end; gap: 6px; height: 200px; }
 .bar-col { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; min-width: 0; }
 .bar { width: 100%; max-width: 28px; min-height: 3px; border-radius: 6px 6px 2px 2px; background: var(--grad); position: relative; transition: height .6s cubic-bezier(.2,.7,.2,1); }
@@ -116,5 +165,6 @@ const fmtDay = (d: string) => new Date(d).toLocaleDateString(undefined, { day: '
 .avatar { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--grad); font-weight: 700; }
 .new { font-size: .72rem; padding: 3px 9px; border-radius: 99px; background: color-mix(in srgb, var(--accent-2) 20%, transparent); color: var(--accent-2); }
 .db { display: flex; align-items: center; gap: 6px; font-size: .8rem; }
+@media (max-width: 640px) { .pipe { grid-template-columns: repeat(3, 1fr); } .money { grid-template-columns: 1fr; } }
 @media (max-width: 1000px) { .cards { grid-template-columns: repeat(2, 1fr); } .row { grid-template-columns: 1fr; } }
 </style>

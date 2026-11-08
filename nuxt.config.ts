@@ -42,6 +42,8 @@ export default defineNuxtConfig({
   },
 
   nitro: {
+    // Vercel Cron: daily follow-up reminder email at 09:00 IST (03:30 UTC)
+    vercel: { config: { crons: [{ path: '/api/cron/reminders', schedule: '30 3 * * *' }] } } as any,
     // Local dev persists data to ./.data so you can play with the admin.
     devStorage: {
       db: { driver: 'fs', base: './.data/db' },

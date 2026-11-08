@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
   if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || message.length < 5)
     throw createError({ statusCode: 400, statusMessage: 'Please provide your name, a valid email and a message.' })
   const messages = await getCollection<any>('messages')
-  messages.unshift({ id: uid(), name, email, budget, message, read: false, createdAt: new Date().toISOString() })
+  messages.unshift({ id: uid(), name, email, budget, message, read: false, status: 'new', notes: [], createdAt: new Date().toISOString() })
   await saveCollection('messages', messages.slice(0, 500))
 
   // Email alert to the admin (only when Resend is configured). Never blocks the lead.
@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
           <h2>New enquiry</h2>
           <p><b>${escapeHtml(name)}</b> &lt;${escapeHtml(email)}&gt;${budget ? `<br>${escapeHtml(budget)}` : ''}</p>
           <p style="white-space:pre-wrap;background:#f5f5f7;padding:14px;border-radius:10px">${escapeHtml(message)}</p>
-          <p>Reply to this email to answer directly, or <a href="${origin}/admin/messages">open the inbox</a>.</p>
+          <p>Reply to this email to answer directly, or <a href="${origin}/admin/leads">open your pipeline</a>.</p>
         </div>`,
       })
     }

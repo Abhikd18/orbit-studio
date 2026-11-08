@@ -15,7 +15,8 @@ const nav = [
   { to: '/admin/posts', label: 'Blog', icon: 'edit' },
   { to: '/admin/faqs', label: 'FAQ', icon: 'chart' },
   { to: '/admin/estimator', label: 'Estimator', icon: 'bolt' },
-  { to: '/admin/messages', label: 'Messages', icon: 'inbox' },
+  { to: '/admin/leads', label: 'Leads', icon: 'inbox' },
+  { to: '/admin/proposals', label: 'Proposals', icon: 'mail' },
   { to: '/admin/settings', label: 'Settings', icon: 'cog' },
 ]
 async function logout() {
