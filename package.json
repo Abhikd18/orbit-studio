@@ -1,0 +1,27 @@
+{
+  "name": "orbit-studio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "mobile:build": "cross-env NUXT_MOBILE=1 nuxt generate",
+    "mobile:android": "cap open android",
+    "mobile:ios": "cap open ios",
+    "mobile:sync": "cap sync"
+  },
+  "dependencies": {
+    "@capacitor/core": "^8.6.0",
+    "@upstash/redis": "^1.41.0",
+    "nuxt": "^4.6.4",
+    "vue": "^3.5.45",
+    "vue-router": "^5.4.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.6.0",
+    "cross-env": "^10.1.0"
+  }
+}
